@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Inquiries — Dhiblawe Trading Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css" />
+<style>
+  body { background: var(--cream); }
+  .admin-header {
+    background: var(--green-900);
+    color: var(--white);
+    padding: 20px 0;
+  }
+  .admin-header .container { display: flex; justify-content: space-between; align-items: center; }
+  .admin-header h1 { color: var(--white); font-size: 1.3rem; margin: 0; }
+  .admin-main { padding: 40px 0; }
+  .inquiry-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 18px;
+    border-left: 4px solid var(--accent);
+  }
+  .inquiry-card .meta { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .inquiry-card .meta strong { color: var(--green-900); }
+  .inquiry-card .tag {
+    display: inline-block;
+    background: var(--green-100);
+    color: var(--green-700);
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+  }
+  .inquiry-card .details { font-size: 0.88rem; color: var(--ink-soft); margin-bottom: 8px; }
+  .empty-state { text-align: center; color: var(--ink-soft); padding: 60px 0; }
+  .btn-small { padding: 8px 16px; font-size: 0.85rem; }
+  .btn-ghost { background: transparent; color: var(--white); border: 1.5px solid rgba(255,255,255,0.4); }
+  .btn-ghost:hover { background: rgba(255,255,255,0.1); }
+</style>
+</head>
+<body>
+  <header class="admin-header">
+    <div class="container">
+      <h1>Dhiblawe Trading — Inquiries</h1>
+      <button class="btn btn-small btn-ghost" id="logoutBtn">Log Out</button>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <div class="container">
+      <div id="list">Loading...</div>
+    </div>
+  </main>
+
+  <script>
+    async function checkAuth() {
+      const res = await fetch("/api/admin-check");
+      const data = await res.json();
+      if (!data.authenticated) {
+        window.location.href = "/admin/login";
+      }
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement("div");
+      div.textContent = str || "";
+      return div.innerHTML;
+    }
+
+    async function loadInquiries() {
+      const list = document.getElementById("list");
+      try {
+        const res = await fetch("/api/admin-inquiries");
+        const data = await res.json();
+
+        if (!res.ok || !data.ok) {
+          if (res.status === 401) {
+            window.location.href = "/admin/login";
+            return;
+          }
+          list.innerHTML = `<div class="empty-state">Could not load inquiries.</div>`;
+          return;
+        }
+
+        if (!data.inquiries.length) {
+          list.innerHTML = `<div class="empty-state">No inquiries yet. New quote requests will show up here.</div>`;
+          return;
+        }
+
+        list.innerHTML = data.inquiries
+          .map(
+            (i) => `
+          <div class="inquiry-card">
+            <div class="meta">
+              <strong>${escapeHtml(i.name)}${i.business ? " — " + escapeHtml(i.business) : ""}</strong>
+              <span class="tag">${escapeHtml(i.interest)}</span>
+            </div>
+            <div class="details">
+              ${escapeHtml(i.email)}${i.phone ? " · " + escapeHtml(i.phone) : ""} ·
+              ${new Date(i.createdAt).toLocaleString()}
+            </div>
+            <p style="margin:0;">${escapeHtml(i.message)}</p>
+          </div>
+        `
+          )
+          .join("");
+      } catch (err) {
+        list.innerHTML = `<div class="empty-state">Network error loading inquiries.</div>`;
+      }
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      await fetch("/api/admin-logout", { method: "POST" });
+      window.location.href = "/admin/login";
+    });
+
+    checkAuth().then(loadInquiries);
+  </script>
+</body>
+</html>

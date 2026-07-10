@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Login — Dhiblawe Trading</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css" />
+<style>
+  body { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--green-900); }
+  .login-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 40px;
+    width: 100%;
+    max-width: 380px;
+  }
+  .login-card h1 { font-size: 1.5rem; margin-bottom: 6px; }
+  .login-card p { margin-bottom: 24px; }
+  .login-card form { display: grid; gap: 16px; }
+  .login-card button { width: 100%; justify-content: center; }
+</style>
+</head>
+<body>
+  <div class="login-card">
+    <span class="eyebrow">Dhiblawe Trading</span>
+    <h1>Admin Login</h1>
+    <p>Sign in to view customer inquiries.</p>
+    <form id="loginForm">
+      <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required autofocus />
+      </div>
+      <button type="submit" class="btn btn-primary">Sign In</button>
+      <div class="form-status" id="loginStatus"></div>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById("loginForm");
+    const status = document.getElementById("loginStatus");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      status.textContent = "Signing in...";
+      status.className = "form-status";
+
+      const password = document.getElementById("password").value;
+
+      try {
+        const res = await fetch("/api/admin-login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password }),
+        });
+        const result = await res.json();
+
+        if (res.ok && result.ok) {
+          window.location.href = "/admin/dashboard";
+        } else {
+          status.textContent = result.error || "Login failed.";
+          status.className = "form-status error";
+        }
+      } catch (err) {
+        status.textContent = "Network error. Please try again.";
+        status.className = "form-status error";
+      }
+    });
+  </script>
+</body>
+</html>
