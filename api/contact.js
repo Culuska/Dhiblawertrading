@@ -1,4 +1,4 @@
-const { kv } = require("@vercel/kv");
+const { redis } = require("../lib/redis");
 
 const LIST_KEY = "dhiblawe:inquiries";
 const MAX_STORED = 500;
@@ -46,9 +46,14 @@ module.exports = async (req, res) => {
     createdAt: new Date().toISOString(),
   };
 
+  if (!redis) {
+    console.error("Redis not configured: missing KV_REST_API_URL/TOKEN env vars.");
+    return res.status(500).json({ ok: false, error: "Could not save your request. Please try again later." });
+  }
+
   try {
-    await kv.lpush(LIST_KEY, JSON.stringify(record));
-    await kv.ltrim(LIST_KEY, 0, MAX_STORED - 1);
+    await redis.lpush(LIST_KEY, JSON.stringify(record));
+    await redis.ltrim(LIST_KEY, 0, MAX_STORED - 1);
   } catch (err) {
     console.error("Failed to store inquiry", err);
     return res.status(500).json({ ok: false, error: "Could not save your request. Please try again." });

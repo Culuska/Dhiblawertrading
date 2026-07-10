@@ -4,7 +4,7 @@
   "private": true,
   "description": "Dhiblawe Trading — food supply company website (meat, fruits, dry food, milk)",
   "dependencies": {
-    "@vercel/kv": "^2.0.0",
+    "@upstash/redis": "^1.38.0",
     "jsonwebtoken": "^9.0.2"
   }
 }

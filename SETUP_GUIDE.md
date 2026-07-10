@@ -30,16 +30,19 @@ In the Vercel project setup screen, under **Environment Variables**, add:
 
 Click **Deploy**. Within a minute or two you'll get a live URL like `dhiblawertrading.vercel.app`.
 
-## Step 2 — Add a database (Vercel KV) for the contact form
+## Step 2 — Add a database (Upstash Redis) for the contact form
 
-The contact form needs somewhere to store submissions.
+The contact form needs somewhere to store submissions. Vercel's own KV product is
+retired, so databases are now added through the Marketplace.
 
 1. In your Vercel project, go to the **Storage** tab.
-2. Click **Create Database** and choose **KV** (or, if KV isn't shown, choose the
-   **Upstash for Redis** option under Marketplace Database Providers — it works the same way).
+2. Click **Create Database**, then choose **Upstash** → **Redis** (serverless, has a
+   free tier) under Marketplace Database Providers.
 3. Follow the prompts to create it, then **Connect** it to this project.
-4. Vercel automatically adds the `KV_REST_API_URL` and `KV_REST_API_TOKEN` environment
-   variables for you — no manual copying needed.
+4. Vercel automatically adds the REST API URL/token environment variables for you —
+   no manual copying needed (this project reads either `KV_REST_API_URL` /
+   `KV_REST_API_TOKEN` or `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`,
+   whichever the integration sets).
 5. Go to **Deployments** and **Redeploy** the project so it picks up the new database
    connection.
 

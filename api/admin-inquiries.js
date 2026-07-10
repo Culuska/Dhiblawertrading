@@ -1,4 +1,4 @@
-const { kv } = require("@vercel/kv");
+const { redis } = require("../lib/redis");
 const { verifySessionFromRequest } = require("../lib/auth");
 
 const LIST_KEY = "dhiblawe:inquiries";
@@ -8,8 +8,12 @@ module.exports = async (req, res) => {
     return res.status(401).json({ ok: false, error: "Not authenticated" });
   }
 
+  if (!redis) {
+    return res.status(500).json({ ok: false, error: "Database not configured." });
+  }
+
   try {
-    const raw = await kv.lrange(LIST_KEY, 0, -1);
+    const raw = await redis.lrange(LIST_KEY, 0, -1);
     const inquiries = raw.map((item) => {
       if (typeof item === "string") {
         try {
@@ -18,7 +22,7 @@ module.exports = async (req, res) => {
           return null;
         }
       }
-      return item; // @vercel/kv may already return parsed objects
+      return item; // @upstash/redis may already return parsed objects
     }).filter(Boolean);
 
     return res.status(200).json({ ok: true, inquiries });
