@@ -1,7 +1,9 @@
 # Dhiblawe Trading — Setup Guide
 
 This is the website for Dhiblawe Trading (meat, fruits & vegetables, dry food,
-and milk supply), ready to deploy to **dhiblawetrading.com** via Vercel.
+and milk supply), ready to deploy on Vercel — using the free `*.vercel.app`
+URL Vercel gives every project, no domain purchase required. You can add a
+custom domain like `dhiblawetrading.com` later whenever you buy one.
 
 ## What's in this project
 
@@ -16,7 +18,10 @@ and milk supply), ready to deploy to **dhiblawetrading.com** via Vercel.
 
 1. Go to **vercel.com** and sign in (you can use your GitHub account).
 2. Click **Add New → Project**, and select the `dhiblawertrading` GitHub repository.
-3. Vercel will auto-detect this as a Node project. Before clicking Deploy, add the
+3. On the same screen you can edit the **Project Name** — this decides your free URL,
+   e.g. naming it `dhiblawe-trading` gives you `https://dhiblawe-trading.vercel.app`.
+   You can rename it later in Settings → General if you change your mind.
+4. Vercel will auto-detect this as a Node project. Before clicking Deploy, add the
    environment variables below.
 
 ### Step 1a — Environment variables
@@ -49,23 +54,25 @@ retired, so databases are now added through the Marketplace.
 Once this is done, submissions from the contact form on the site will be saved, and
 will appear on the admin dashboard.
 
-## Step 3 — Connect your domain
+## Step 3 — Use it
+
+- **Main site:** `https://<your-project-name>.vercel.app` — visitors can browse
+  products and submit the contact/quote form.
+- **Admin dashboard:** `https://<your-project-name>.vercel.app/admin` — log in with
+  the `ADMIN_PASSWORD` you set, to view every quote request that's come in.
+
+## Step 4 — Connect a custom domain (later, optional)
+
+Whenever you buy `dhiblawetrading.com` (or any domain):
 
 1. In Vercel, go to your project → **Settings → Domains**.
-2. Type `dhiblawetrading.com` (and optionally `www.dhiblawetrading.com`) and click **Add**.
+2. Type the domain (and optionally the `www.` version) and click **Add**.
 3. Vercel will show DNS records (an A record and/or CNAME) to add wherever you
    bought the domain (GoDaddy, Namecheap, etc.).
-4. Log into your domain registrar, open **DNS settings** for dhiblawetrading.com, and
-   add the exact records Vercel showed you.
+4. Log into your domain registrar, open its DNS settings, and add the exact records
+   Vercel showed you.
 5. This can take a few minutes to a few hours to activate. Vercel's domain page shows
-   a green checkmark once it's live.
-
-## Step 4 — Use it
-
-- **Main site:** `https://dhiblawetrading.com` — visitors can browse products and submit
-  the contact/quote form.
-- **Admin dashboard:** `https://dhiblawetrading.com/admin` — log in with the
-  `ADMIN_PASSWORD` you set, to view every quote request that's come in.
+   a green checkmark once it's live. The `.vercel.app` URL keeps working alongside it.
 
 ## Editing content
 
@@ -81,7 +88,7 @@ will appear on the admin dashboard.
   then redeploy.
 - **Contact form says "Could not save your request"** — the database isn't connected
   yet. Complete Step 2, then redeploy.
-- **Domain not connecting** — DNS changes can take time; double-check the records at
-  your registrar exactly match what Vercel showed you.
+- **Custom domain not connecting** — DNS changes can take time; double-check the
+  records at your registrar exactly match what Vercel showed you.
 - **Forgot the admin password** — go to Vercel → Settings → Environment Variables, edit
   `ADMIN_PASSWORD`, save, and redeploy.
